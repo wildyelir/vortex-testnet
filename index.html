@@ -194,9 +194,12 @@
                                 <div id="tokenListItems"></div>
                             </div>
                             
-                            <div class="flex justify-center">
-                                <button onclick="showAddToken()" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm font-medium">
+                            <div class="flex gap-2">
+                                <button onclick="showAddToken()" class="flex-1 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm font-medium">
                                     + Add Token Market
+                                </button>
+                                <button id="addLiquidityBtn" onclick="showAddLiquidity()" class="flex-1 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm font-medium" style="display:none;">
+                                    💧 Add Liquidity
                                 </button>
                             </div>
                         </div>
@@ -1510,7 +1513,10 @@
                     
                 } else {
                     const tokenAmount = Math.floor(payAmt * 1000000);
-                    const source = `(call ${selectedToken.marketAddress} (sell-tokens ${tokenAmount}))`;
+                    const source = `(do
+                (import convex.asset :as asset)
+                (asset/offer ${selectedToken.marketAddress} [${selectedToken.tokenAddress} ${tokenAmount}])
+                (call ${selectedToken.marketAddress} (sell-tokens ${tokenAmount})))`;
                     
                     console.log('Executing:', source);
                     await submitTx(source, 0);
