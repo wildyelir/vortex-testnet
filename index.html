@@ -144,8 +144,8 @@
                     </div>
                     <div class="token-input rounded-xl p-4">
                         <div class="flex items-center gap-2 mb-2">
-                            <input type="number" id="payAmount" placeholder="0.0" class="bg-transparent flex-1 text-2xl focus:outline-none" onkeyup="calculateSwap()">
-                            <button onclick="setMaxAmount()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            <input type="number" id="payAmount" placeholder="0.0" class="bg-transparent flex-1 min-w-0 text-xl sm:text-2xl focus:outline-none" onkeyup="calculateSwap()">
+                            <button onclick="setMaxAmount()" class="bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex-shrink-0">
                                 MAX
                             </button>
                         </div>
@@ -194,12 +194,9 @@
                                 <div id="tokenListItems"></div>
                             </div>
                             
-                            <div class="flex gap-2">
-                                <button onclick="showAddToken()" class="flex-1 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm font-medium">
+                            <div class="flex justify-center">
+                                <button onclick="showAddToken()" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm font-medium">
                                     + Add Token Market
-                                </button>
-                                <button id="addLiquidityBtn" onclick="showAddLiquidity()" class="flex-1 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm font-medium" style="display:none;">
-                                    💧 Add Liquidity
                                 </button>
                             </div>
                         </div>
@@ -311,7 +308,7 @@
             </div>
             
             <!-- Add Liquidity Modal -->
-            <div id="addLiquidityModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center" style="display:none; z-index: 1000;">
+            <div id="addLiquidityModal" class="fixed inset-0 bg-black/50 backdrop-filter backdrop-blur-sm flex items-center justify-center" style="display:none; z-index: 1000;">
                 <div class="max-w-md mx-4 card-glass rounded-2xl p-6 shadow-xl max-h-[90vh] overflow-y-auto">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-bold">💧 Add Liquidity</h3>
@@ -378,7 +375,7 @@
             </div>
             
             <!-- Remove Liquidity Modal -->
-            <div id="removeLiquidityModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center" style="display:none; z-index: 1000;">
+            <div id="removeLiquidityModal" class="fixed inset-0 bg-black/50 backdrop-filter backdrop-blur-sm flex items-center justify-center" style="display:none; z-index: 1000;">
                 <div class="max-w-md mx-4 card-glass rounded-2xl p-6 shadow-xl max-h-[90vh] overflow-y-auto">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-bold">🔥 Remove Liquidity</h3>
@@ -485,92 +482,8 @@
                 </div>
             </div>
             
-            <!-- Create Token & Market Modal -->
-            <div id="createTokenModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center" style="display:none; z-index: 1000;">
-                <div class="max-w-md mx-4 card-glass rounded-2xl p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-bold">🚀 Create Token & Market</h3>
-                        <button onclick="hideCreateToken()" class="text-white/60 hover:text-white text-2xl leading-none">&times;</button>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Token Ticker (Symbol)</label>
-                            <input type="text" id="newTokenTicker" placeholder="e.g. MOON" maxlength="10" 
-                                   class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:border-purple-500">
-                            <p class="text-xs text-white/50 mt-1">Short symbol for your token (3-10 characters)</p>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Total Supply</label>
-                            <input type="number" id="newTokenSupply" placeholder="e.g. 1000000" min="1" 
-                                   class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:border-purple-500">
-                            <p class="text-xs text-white/50 mt-1">Total tokens to mint (uses 6 decimals)</p>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Initial Token Liquidity</label>
-                            <input type="number" id="newTokenLiquidity" placeholder="e.g. 500000" min="0" step="0.000001"
-                                   class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:border-purple-500">
-                            <p class="text-xs text-white/50 mt-1">Tokens to add to liquidity pool</p>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Initial CVM Liquidity</label>
-                            <input type="number" id="newCvmLiquidity" placeholder="e.g. 1.0" min="0" step="0.000000001"
-                                   class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:border-purple-500">
-                            <p class="text-xs text-white/50 mt-1">CVM to add to liquidity pool</p>
-                        </div>
-                        
-                        <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
-                            <p class="text-xs text-yellow-300">
-                                ⚠️ <strong>Important:</strong> Creating a token costs ~0.04 CVM in fees. Make sure you have enough balance!
-                            </p>
-                        </div>
-                        
-                        <button onclick="createTokenAndMarket()" 
-                                class="w-full bg-purple-600 hover:bg-purple-700 px-4 py-3 rounded-lg font-medium">
-                            Create Token & Market
-                        </button>
-                        
-                        <div id="createTokenStatus" class="hidden p-3 rounded-lg">
-                            <p id="createTokenStatusText" class="text-sm"></p>
-                        </div>
-                        
-                        <!-- Success Result with Copyable Addresses -->
-                        <div id="createTokenResult" class="hidden bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-                            <h4 class="font-bold text-green-400 mb-2">✅ Token & Market Created!</h4>
-                            <div class="space-y-2 text-sm">
-                                <div>
-                                    <p class="text-white/60 mb-1">Token Address:</p>
-                                    <div class="flex gap-2">
-                                        <code id="createdTokenAddress" class="flex-1 bg-black/30 px-3 py-2 rounded font-mono text-green-400"></code>
-                                        <button onclick="copyToClipboard('createdTokenAddress')" class="bg-white/10 hover:bg-white/20 px-3 py-2 rounded">
-                                            📋
-                                        </button>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="text-white/60 mb-1">Market Address:</p>
-                                    <div class="flex gap-2">
-                                        <code id="createdMarketAddress" class="flex-1 bg-black/30 px-3 py-2 rounded font-mono text-green-400"></code>
-                                        <button onclick="copyToClipboard('createdMarketAddress')" class="bg-white/10 hover:bg-white/20 px-3 py-2 rounded">
-                                            📋
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="bg-white/5 rounded p-3 mt-3">
-                                    <p class="text-xs text-white/70 mb-2">💡 <strong>Next Steps:</strong></p>
-                                    <p class="text-xs text-white/60">Your token has been created and liquidity added! You can now add it to your token list using the addresses above.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
             <!-- Quick Create Token Modal (From Add Token Panel) -->
-            <div id="quickCreateTokenModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center" style="display:none; z-index: 1000;">
+            <div id="quickCreateTokenModal" class="fixed inset-0 bg-black/50 backdrop-filter backdrop-blur-sm flex items-center justify-center" style="display:none; z-index: 1000;">
                 <div class="max-w-md mx-4 card-glass rounded-2xl p-6 shadow-xl max-h-[90vh] overflow-y-auto">
                     <div class="flex justify-between items-center mb-4 sticky top-0 bg-inherit pb-2">
                         <h3 class="text-xl font-bold">🚀 Create & List Your Token</h3>
@@ -747,7 +660,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tweetnacl-util@0.15.1/nacl-util.min.js"></script>
 
     <script>
-        // MAINNET: Change this line to switch between mainnet and testnet
+        // TESTNET: Connected to Convex Testnet
         const CONVEX_URL = 'https://mikera1337-convex-testnet.hf.space';
         
         let wallet = null;
@@ -761,34 +674,8 @@
             feather.replace();
             document.getElementById('walletModal').classList.add('active');
             loadTokens();
-            updateCreateOrLiquidityButton(); // Initialize button state
-            console.log('✓ VorteX DEX v2.5.2 initialized - Token Transfer Fix');
+            console.log('✓ VorteX DEX v2.5.2 initialized - Connected to Convex Testnet');
         };
-        
-        // Update the Create/Liquidity button based on whether a token is selected
-        function updateCreateOrLiquidityButton() {
-            const btn = document.getElementById('createOrLiquidityBtn');
-            if (!btn) return;
-            
-            if (selectedToken) {
-                // Token is selected - show "Add Liquidity"
-                btn.innerHTML = '💧 Add Liquidity';
-                btn.onclick = showAddLiquidity;
-            } else {
-                // No token selected - show "Create Token & Market"
-                btn.innerHTML = '🚀 Create Token & Market';
-                btn.onclick = showCreateToken;
-            }
-        }
-        
-        // Handle the button click (wrapper function)
-        function handleCreateOrLiquidity() {
-            if (selectedToken) {
-                showAddLiquidity();
-            } else {
-                showCreateToken();
-            }
-        }
         
         function showAddLiquidity() {
             if (!selectedToken) {
@@ -1623,10 +1510,7 @@
                     
                 } else {
                     const tokenAmount = Math.floor(payAmt * 1000000);
-                    const source = `(do
-                (import convex.asset :as asset)
-                (asset/offer ${selectedToken.marketAddress} [${selectedToken.tokenAddress} ${tokenAmount}])
-                (call ${selectedToken.marketAddress} (sell-tokens ${tokenAmount})))`;
+                    const source = `(call ${selectedToken.marketAddress} (sell-tokens ${tokenAmount}))`;
                     
                     console.log('Executing:', source);
                     await submitTx(source, 0);
@@ -1715,20 +1599,6 @@
             }, 100);
         }
         
-        function showCreateToken() {
-            document.getElementById('createTokenModal').style.display = 'flex';
-            document.getElementById('newTokenTicker').value = '';
-            document.getElementById('newTokenSupply').value = '';
-            document.getElementById('newTokenLiquidity').value = '';
-            document.getElementById('newCvmLiquidity').value = '';
-            document.getElementById('createTokenResult').classList.add('hidden');
-            document.getElementById('createTokenStatus').classList.add('hidden');
-        }
-        
-        function hideCreateToken() {
-            document.getElementById('createTokenModal').style.display = 'none';
-        }
-        
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
             const text = element.textContent;
@@ -1738,145 +1608,6 @@
                 console.error('Copy failed:', err);
                 showStatus('Failed to copy', 'error');
             });
-        }
-        
-        async function createTokenAndMarket() {
-            if (!account || !wallet || !wallet.keyPair) {
-                showStatus('Please import your account first', 'error');
-                return;
-            }
-            
-            const ticker = document.getElementById('newTokenTicker').value.trim().toUpperCase();
-            const supply = parseInt(document.getElementById('newTokenSupply').value);
-            const tokenLiq = parseFloat(document.getElementById('newTokenLiquidity').value);
-            const cvmLiq = parseFloat(document.getElementById('newCvmLiquidity').value);
-            
-            if (!ticker || ticker.length < 2 || ticker.length > 10) {
-                showCreateTokenStatus('Please enter a valid ticker (2-10 characters)', 'error');
-                return;
-            }
-            
-            if (!supply || supply < 1) {
-                showCreateTokenStatus('Please enter a valid supply (minimum 1)', 'error');
-                return;
-            }
-            
-            if (!tokenLiq || tokenLiq < 0 || tokenLiq > supply) {
-                showCreateTokenStatus('Token liquidity must be between 0 and total supply', 'error');
-                return;
-            }
-            
-            if (!cvmLiq || cvmLiq <= 0) {
-                showCreateTokenStatus('CVM liquidity must be greater than 0', 'error');
-                return;
-            }
-            
-            const balance = await getCvmBalance(account);
-            const requiredBalance = cvmLiq + 0.05;
-            if (balance < requiredBalance) {
-                showCreateTokenStatus(`Insufficient balance. Need ${requiredBalance.toFixed(4)} CVM (including fees)`, 'error');
-                return;
-            }
-            
-            try {
-                showCreateTokenStatus('Creating token and market...', 'info');
-                
-                const supplyUnits = Math.floor(supply * 1000000);
-                const tokenLiqUnits = Math.floor(tokenLiq * 1000000);
-                const cvmLiqUnits = Math.floor(cvmLiq * 1000000000);
-                
-                const source = `(do
-  (import convex.fungible :as fungible)
-  (import torus.exchange :as torus)
-  
-  (def my-token (deploy (fungible/build-token {:supply ${supplyUnits}})))
-  
-  (call my-token (transfer *address* ${supplyUnits - tokenLiqUnits}))
-  
-  (torus/add-liquidity my-token ${tokenLiqUnits} ${cvmLiqUnits})
-  
-  {:token my-token 
-   :market (torus/get-market my-token)})`;
-                
-                console.log('Creating token:', {ticker, supply, tokenLiq, cvmLiq});
-                console.log('Transaction source:', source);
-                
-                showCreateTokenStatus('Preparing transaction...', 'info');
-                const prepareRes = await fetch(`${CONVEX_URL}/api/v1/transaction/prepare`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({address: account, source})
-                });
-                const prepareData = await prepareRes.json();
-                
-                if (!prepareData.hash) {
-                    throw new Error('Failed to prepare transaction: ' + JSON.stringify(prepareData));
-                }
-                
-                console.log('Transaction prepared:', prepareData);
-                
-                showCreateTokenStatus('Signing transaction...', 'info');
-                const hashBytes = hexToBytes(prepareData.hash);
-                const signature = nacl.sign.detached(hashBytes, wallet.keyPair.secretKey);
-                const signatureHex = bytesToHex(signature);
-                
-                showCreateTokenStatus('Submitting to blockchain...', 'info');
-                const submitRes = await fetch(`${CONVEX_URL}/api/v1/transaction/submit`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        hash: prepareData.hash,
-                        accountKey: wallet.publicKey,
-                        sig: signatureHex
-                    })
-                });
-                const result = await submitRes.json();
-                
-                console.log('Transaction result:', result);
-                
-                if (result.errorCode) {
-                    throw new Error(result.value || result.errorCode);
-                }
-                
-                const tokenAddress = '#' + result.value.token;
-                const marketAddress = '#' + result.value.market;
-                
-                console.log('Created:', {tokenAddress, marketAddress});
-                
-                document.getElementById('createdTokenAddress').textContent = tokenAddress;
-                document.getElementById('createdMarketAddress').textContent = marketAddress;
-                document.getElementById('createTokenResult').classList.remove('hidden');
-                document.getElementById('createTokenStatus').classList.add('hidden');
-                
-                await updateBalances();
-                
-                showStatus(`Token ${ticker} created successfully!`, 'success');
-                
-            } catch (error) {
-                console.error('Create token error:', error);
-                showCreateTokenStatus('Failed to create token: ' + error.message, 'error');
-            }
-        }
-        
-        function showCreateTokenStatus(message, type) {
-            const statusDiv = document.getElementById('createTokenStatus');
-            const statusText = document.getElementById('createTokenStatusText');
-            
-            statusDiv.className = 'p-3 rounded-lg';
-            statusDiv.classList.remove('hidden');
-            
-            if (type === 'success') {
-                statusDiv.classList.add('bg-green-500/10', 'border', 'border-green-500/30');
-                statusText.className = 'text-sm text-green-300';
-            } else if (type === 'error') {
-                statusDiv.classList.add('bg-red-500/10', 'border', 'border-red-500/30');
-                statusText.className = 'text-sm text-red-300';
-            } else {
-                statusDiv.classList.add('bg-blue-500/10', 'border', 'border-blue-500/30');
-                statusText.className = 'text-sm text-blue-300';
-            }
-            
-            statusText.textContent = message;
         }
         
         function hideAddToken() {
@@ -2051,10 +1782,6 @@
             document.getElementById('receiveSelectedTokenText').textContent = displayText;
             document.getElementById('paySelectedTokenText').textContent = displayText;
             document.getElementById('tokenListPanel').style.display = 'none';
-             document.getElementById('addLiquidityBtn').style.display = 'block';
-            
-            // Update the Create/Liquidity button
-            updateCreateOrLiquidityButton();
             
             updateBalances();
             calculateSwap();
@@ -2077,7 +1804,6 @@
                     selectedToken = null;
                     document.getElementById('receiveSelectedTokenText').textContent = 'Select token...';
                     document.getElementById('paySelectedTokenText').textContent = 'Select token...';
-                    document.getElementById('addLiquidityBtn').style.display = 'none';
                     updateBalances();
                 }
                 
