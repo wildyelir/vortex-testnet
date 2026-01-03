@@ -1623,7 +1623,10 @@
                     
                 } else {
                     const tokenAmount = Math.floor(payAmt * 1000000);
-                    const source = `(call ${selectedToken.marketAddress} (sell-tokens ${tokenAmount}))`;
+                    const source = `(do
+                (import convex.asset :as asset)
+                (asset/offer ${selectedToken.marketAddress} [${selectedToken.tokenAddress} ${tokenAmount}])
+                (call ${selectedToken.marketAddress} (sell-tokens ${tokenAmount})))`;
                     
                     console.log('Executing:', source);
                     await submitTx(source, 0);
