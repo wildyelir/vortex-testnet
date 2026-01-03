@@ -1788,6 +1788,7 @@
             document.getElementById('receiveSelectedTokenText').textContent = displayText;
             document.getElementById('paySelectedTokenText').textContent = displayText;
             document.getElementById('tokenListPanel').style.display = 'none';
+            document.getElementById('addLiquidityBtn').style.display = 'block';
             
             updateBalances();
             calculateSwap();
@@ -1810,6 +1811,7 @@
                     selectedToken = null;
                     document.getElementById('receiveSelectedTokenText').textContent = 'Select token...';
                     document.getElementById('paySelectedTokenText').textContent = 'Select token...';
+                    document.getElementById('addLiquidityBtn').style.display = 'none';
                     updateBalances();
                 }
                 
