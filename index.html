@@ -1280,7 +1280,7 @@
                 const response = await fetch(`${CONVEX_URL}/api/v1/query`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ address: 1, source: query })
+                    body: JSON.stringify({ address: 11, source: query })
                 });
                 
                 const result = await response.json();
