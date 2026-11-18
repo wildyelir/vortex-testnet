@@ -791,7 +791,7 @@
                 showAddLiquidityStatus('Adding liquidity...', 'info');
                 
                 // Convert to smallest units
-                const tokenAmountUnits = Math.floor(tokenAmount * 1000000); // 6 decimals
+                const tokenAmountUnits = Math.floor(tokenAmount * tokenScale());
                 const cvmAmountUnits = Math.floor(cvmAmount * 1000000000); // 9 decimals
                 
                 // Build transaction
@@ -1098,7 +1098,7 @@
   (import torus.exchange :as torus)
   
   ;; Create token with full supply
-  (def my-token (deploy (fungible/build-token {:supply ${supplyUnits}})))
+  (def my-token (deploy (fungible/build-token {:supply ${supplyUnits} :decimals 6})))
   
   ;; Add liquidity - Torus automatically pulls tokens from token contract
   (torus/add-liquidity my-token ${tokenLiqUnits} ${cvmLiqUnits})
@@ -1113,7 +1113,7 @@
   (import convex.fungible :as fungible)
   
   ;; Create token with full supply  
-  (def my-token (deploy (fungible/build-token {:supply ${supplyUnits}})))
+  (def my-token (deploy (fungible/build-token {:supply ${supplyUnits} :decimals 6})))
   
   ;; Return token address
   {:token my-token})`;
@@ -1414,6 +1414,25 @@
             return data.balance ? data.balance / 1000000000 : 0;
         }
         
+        // Token decimals are read from the token contract (they vary per token)
+        async function fetchTokenDecimals(tokenAddress) {
+            const res = await fetch(`${CONVEX_URL}/api/v1/query`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({address: account || 11, source: `(call ${tokenAddress} (decimals))`})
+            });
+            const data = await res.json();
+            if (data.errorCode || typeof data.value !== 'number') {
+                throw new Error('Could not read decimals for ' + tokenAddress);
+            }
+            return data.value;
+        }
+        
+        // Smallest units per whole token, for the selected token
+        function tokenScale() {
+            return 10 ** selectedToken.decimals;
+        }
+        
         async function getTokenBalance(userAddr, tokenAddr) {
             try {
                 const query = `(call ${tokenAddr} (balance #${userAddr}))`;
@@ -1428,7 +1447,7 @@
                 console.log('Token balance query:', data);
                 
                 if (data.value && typeof data.value === 'number') {
-                    return data.value / 1000000;
+                    return data.value / tokenScale();
                 } else {
                     console.warn('Token balance error:', data);
                     return 0;
@@ -1460,13 +1479,13 @@
                     const data = await res.json();
                     
                     if (data.value && typeof data.value === 'number') {
-                        document.getElementById('receiveAmount').value = (data.value / 1000000).toFixed(6);
+                        document.getElementById('receiveAmount').value = (data.value / tokenScale()).toFixed(6);
                     } else {
                         document.getElementById('receiveAmount').value = '0.00';
                     }
                     
                 } else {
-                    const tokenAmount = Math.floor(payAmt * 1000000);
+                    const tokenAmount = Math.floor(payAmt * tokenScale());
                     const query = `(call ${selectedToken.marketAddress} (sell-tokens-quote ${tokenAmount}))`;
                     
                     const res = await fetch(`${CONVEX_URL}/api/v1/query`, {
@@ -1512,7 +1531,7 @@
                     await submitTx(source, 0);
                     
                 } else {
-                    const tokenAmount = Math.floor(payAmt * 1000000);
+                    const tokenAmount = Math.floor(payAmt * tokenScale());
                     const source = `(do
                 (import convex.asset :as asset)
                 (asset/offer ${selectedToken.marketAddress} [${selectedToken.tokenAddress} ${tokenAmount}])
@@ -1660,7 +1679,7 @@
                 
                 console.log('Raw values:', {tokenBalance, cvmBalance, lpSupply});
                 
-                const tokenBalanceFloat = tokenBalance / 1000000;
+                const tokenBalanceFloat = tokenBalance / tokenScale();
                 const cvmBalanceFloat = cvmBalance / 1000000000;
                 
                 let pricePerToken = 0;
@@ -1782,7 +1801,14 @@
             }
         }
         
-        function selectToken(tokenObj) {
+        async function selectToken(tokenObj) {
+            try {
+                tokenObj.decimals = await fetchTokenDecimals(tokenObj.tokenAddress);
+            } catch (error) {
+                console.error('Token decimals error:', error);
+                showStatus('Could not read token decimals from the network', 'error');
+                return;
+            }
             selectedToken = tokenObj;
             const displayText = `${tokenObj.symbol} (Market: ${tokenObj.marketAddress})`;
             document.getElementById('receiveSelectedTokenText').textContent = displayText;
