@@ -1899,6 +1899,38 @@
                 return;
             }
             
+            // Verify on chain: the token must exist and marketAddr must be its Torus market
+            let onChainMarket;
+            try {
+                const res = await fetch(`${CONVEX_URL}/api/v1/query`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        address: account || 11,
+                        source: `(do (import torus.exchange :as torus) (torus/get-market ${tokenAddr}))`
+                    })
+                });
+                const data = await res.json();
+                if (data.errorCode) {
+                    throw new Error(data.errorCode + ': ' + data.value);
+                }
+                onChainMarket = data.value;
+            } catch (error) {
+                console.error('Market lookup failed:', error);
+                alert('Could not verify the market on chain: ' + error.message);
+                return;
+            }
+            
+            if (onChainMarket === null || onChainMarket === undefined) {
+                alert('No Torus market exists for token ' + tokenAddr + '. Check the token address.');
+                return;
+            }
+            
+            if ('#' + onChainMarket !== marketAddr) {
+                alert('The Torus market for token ' + tokenAddr + ' is #' + onChainMarket + ', not ' + marketAddr);
+                return;
+            }
+            
             tokens.push({
                 tokenAddress: tokenAddr,
                 marketAddress: marketAddr, 
